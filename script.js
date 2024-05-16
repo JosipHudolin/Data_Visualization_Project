@@ -1,11 +1,13 @@
 // Set dimensions of the SVG element
-const width = 800;
+const width = 1400;
 const height = 600;
 
 // Create an SVG element
 const svg = d3.select("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .call(d3.zoom().on("zoom", zoomed))
+    .append("g");
 
 // Define a projection and path generator
 const projection = d3.geoMercator()
@@ -32,27 +34,60 @@ d3.json("europe.geojson").then(function(geoData) {
     d3.json("AirMissions.json").then(function(missionData) {
         console.log("AirMissions data:", missionData); // Log the data to verify it is loaded correctly
 
-        // Add circles for each mission
-        svg.selectAll("circle")
-            .data(missionData)
-            .enter().append("circle")
-            .attr("cx", function(d) {
-                return projection([d.LONGITUDE, d.LATITUDE])[0];
-            })
-            .attr("cy", function(d) {
-                return projection([d.LONGITUDE, d.LATITUDE])[1];
-            })
-            .attr("r", 3)
-            .attr("fill", "red")
-            .attr("stroke", "black")
-            .attr("stroke-width", 0.5)
-            .append("title")  // Add tooltip
-            .text(function(d) {
-                return d.name;
-            });
+        const tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+        // Add icons for each mission
+        svg.selectAll("g.icon")
+        .data(missionData)
+        .enter().append("g")
+        .attr("class", "icon")
+        .attr("transform", function(d) {
+            return "translate(" + projection([d.LONGITUDE, d.LATITUDE]) + ")";
+        })
+        .on("mouseover", function(event, d) { // Pass event and data
+            const tooltipWidth = 150; // Set tooltip width
+            const tooltipHeight = 50; // Set tooltip height
+            const tooltipX = event.pageX + 10; // Position tooltip slightly to the right of the mouse pointer
+            const tooltipY = event.pageY - 20; // Position tooltip slightly above the mouse pointer
+
+            // Transition and display tooltip
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", .9)
+                .style("left", tooltipX + "px")
+                .style("top", tooltipY + "px");
+
+            // Populate tooltip with data
+            tooltip.html("TGTLOCATION: " + d.TGTLOCATION + "<br/>" + "DATE: " + d.MSNDATE);
+        })
+        .on("mouseout", function(event, d) { // Pass event and data
+            // Hide tooltip on mouseout
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        })
+        .append("image")
+        .attr("xlink:href", "icons/nuclear-explosion.png")
+        .attr("x", -12.5)
+        .attr("y", -12.5)
+        .attr("width", 25)
+        .attr("height", 25);
+
     }).catch(function(error) {
         console.error("Error loading the AirMissions data:", error);
     });
 }).catch(function(error) {
     console.error("Error loading the GeoJSON data:", error);
 });
+
+// Zoom function
+function zoomed(event) {
+    svg.attr("transform", event.transform);
+    
+    // Reset the size of the icons to maintain fixed size during zoom
+    svg.selectAll("image")
+        .attr("width", 25 / event.transform.k) // Set the width of the icon inversely proportional to zoom level
+        .attr("height", 25 / event.transform.k); // Set the height of the icon inversely proportional to zoom level
+}
