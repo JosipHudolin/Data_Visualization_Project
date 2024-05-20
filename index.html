@@ -2,17 +2,65 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
-  <title>Europe GeoJSON with D3</title>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <meta charset="UTF-8">
+  <title>WWI Air Missions</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <svg width="800" height="600"></svg>
+  <!-- Country filter -->
+  <label for="country">Country:</label>
+  <select id="country">
+    <option value="All">All Countries</option>
+    <option value="AUSTRIA">Austria</option>
+    <option value="ITALY">Italy</option>
+    <option value="BELGIUM">Belgium</option>
+    <option value="FRANCE">France</option>
+    <option value="GERMANY">Germany</option>
+
+  </select>
+
+  <!-- Month filter -->
+  <label for="month">Month:</label>
+  <select id="month">
+    <option value="1">January</option>
+    <option value="2">February</option>
+    <option value="3">March</option>
+    <option value="4">April</option>
+    <option value="5">May</option>
+    <option value="6">June</option>
+    <option value="7">July</option>
+    <option value="8">August</option>
+    <option value="9">September</option>
+    <option value="10">October</option>
+    <option value="11">November</option>
+    <option value="12">December</option>
+    <!-- Add other month options dynamically if needed -->
+  </select>
+
+  <!-- Year filter -->
+  <label for="year">Year:</label>
+  <select id="year">
+    <option value="All">All years</option>
+    <option value="1914">1914</option>
+    <option value="1915">1915</option>
+    <option value="1916">1916</option>
+    <option value="1917">1917</option>
+    <option value="1918">1918</option>
+  </select>
+
+  <button onclick="applyFilters()">Apply Filters</button>
+
+  <svg></svg>
+  <div id="detailView" class="detail-view">
+    <h2>Mission Details</h2>
+    <p id="detailData"></p>
+  </div>
+  <div id="takeoffDetailView" class="takeoff-detail-view">
+    <h2>Takeoff Base Details</h2>
+    <p id="takeoffDetailData"></p>
+  </div>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="script.js"></script>
 </body>
 
