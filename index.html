@@ -3,8 +3,18 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>WWI Air Missions</title>
+  <title>WWI The Entente Air Missions</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.1/underscore-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="icon" href="icons/soldier.png">
+
 </head>
 
 <body>
@@ -23,6 +33,7 @@
   <!-- Month filter -->
   <label for="month">Month:</label>
   <select id="month">
+    <option value="All">All months</option>
     <option value="1">January</option>
     <option value="2">February</option>
     <option value="3">March</option>
@@ -49,8 +60,22 @@
     <option value="1918">1918</option>
   </select>
 
-  <button onclick="applyFilters()">Apply Filters</button>
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h1 class="chart-title">Number of missions per country</h1>
+      <canvas id="missionsPerCountryChart" width="200" height="200"></canvas>
+      <h1 class="chart-title">Number of missions per target country</h1>
+      <canvas id="missionsPerTargetCountryChart" width="200" height="200"></canvas>
+      <h1 class="chart-title">Amount of bombs per country</h1>
+      <canvas id="bombsPerCountryChart" width="200" height="200"></canvas>
+      <h1 class="chart-title">Number of bombs per target country</h1>
+      <canvas id="bombsPerTargetCountryChart" width="200" height="200"></canvas>
+    </div>
+  </div>
 
+
+  <button id="openModalBtn">Open Modal</button>
   <svg></svg>
   <div id="detailView" class="detail-view">
     <h2>Mission Details</h2>

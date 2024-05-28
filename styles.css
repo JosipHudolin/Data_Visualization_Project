@@ -1,8 +1,7 @@
 body {
-    font-family: "Special Elite", system-ui;
+    font-family: "Merriweather", serif;
 }
 
-/* styles.css */
 .tooltip {
     opacity: 0;
     position: absolute;
@@ -11,17 +10,16 @@ body {
     padding: 8px 12px;
     border-radius: 8px;
     pointer-events: none;
-    font-family: "Special Elite", system-ui;
+    font-family: "Merriweather", serif;
     font-weight: 400;
     font-style: normal;
     font-size: 12px;
     line-height: 1.4;
-    z-index: 9999; /* Ensure the tooltip appears above other elements */
+    z-index: 9999;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     transition: opacity 0.2s ease;
 }
 
-/* Optional: Style for the text inside the tooltip */
 .tooltip-text {
     font-size: 12px;
     line-height: 1.5;
@@ -29,15 +27,15 @@ body {
 
 .detail-view {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #f9f9f9;
+    top: 50px;
+    right: 12px;
+    background-color: #c23b22;
     border: 1px solid #ccc;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     display: none;
-    font-family: 'YourCustomFont', sans-serif;
+    font-family: "Merriweather", serif;
     font-size: 14px;
     line-height: 1.4;
 }
@@ -52,15 +50,15 @@ body {
 
 .takeoff-detail-view {
     position: absolute;
-    top: 30px;
+    top: 50px;
     left: 10px;
-    background-color: #f9f9f9;
+    background-color: #c23b22;
     border: 1px solid #ccc;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     display: none;
-    font-family: 'YourCustomFont', sans-serif;
+    font-family: "Merriweather", serif;
     font-size: 14px;
     line-height: 1.4;
 }
@@ -72,3 +70,111 @@ body {
 .takeoff-detail-view p {
     margin: 0;
 }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+  }
+  
+  .close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .chart-title {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .chart {
+    margin-bottom: 40px;
+  }
+
+  /* Button styles */
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #c23b22;
+    color: black;
+    font-weight: bolder;
+    font-family: "Merriweather", serif;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #FAA0A0;
+  }
+  
+  button:focus {
+    outline: none;
+  }
+  
+  button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+
+  /* Hide the default arrow */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Add custom arrow */
+    background-image: url('arrow-down.svg');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    /* Add padding to accommodate the arrow */
+    padding-right: 25px;
+    /* Other styling */
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    /* Add hover effect */
+    transition: border-color 0.3s ease;
+  }
+  
+  /* Hover effect */
+  select:hover {
+    border-color: #999;
+  }
+  
+  /* Focus effect */
+  select:focus {
+    border-color: #555;
+  }
+
+  option {
+    font-family: "Merriweather", serif;
+  }
+  
