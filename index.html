@@ -63,19 +63,27 @@
   <div id="myModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h1 class="chart-title">Number of missions per country</h1>
-      <canvas id="missionsPerCountryChart" width="200" height="200"></canvas>
-      <h1 class="chart-title">Number of missions per target country</h1>
-      <canvas id="missionsPerTargetCountryChart" width="200" height="200"></canvas>
-      <h1 class="chart-title">Amount of bombs per country</h1>
-      <canvas id="bombsPerCountryChart" width="200" height="200"></canvas>
-      <h1 class="chart-title">Number of bombs per target country</h1>
-      <canvas id="bombsPerTargetCountryChart" width="200" height="200"></canvas>
+      <div class="chart-container">
+        <h1 class="chart-title">Number of missions per country</h1>
+        <canvas id="missionsPerCountryChart" width="130" height="130"></canvas>
+      </div>
+      <div class="chart-container">
+        <h1 class="chart-title">Number of missions per target country</h1>
+        <canvas id="missionsPerTargetCountryChart" width="130" height="130"></canvas>
+      </div>
+      <div class="chart-container">
+        <h1 class="chart-title">Amount of bombs per country</h1>
+        <canvas id="bombsPerCountryChart" width="130" height="130"></canvas>
+      </div>
+      <div class="chart-container">
+        <h1 class="chart-title">Number of bombs per target country</h1>
+        <canvas id="bombsPerTargetCountryChart" width="130" height="130"></canvas>
+      </div>
     </div>
   </div>
 
 
-  <button id="openModalBtn">Open Modal</button>
+  <button id="openModalBtn">Bombing Analysis</button>
   <svg></svg>
   <div id="detailView" class="detail-view">
     <h2>Mission Details</h2>

@@ -1,19 +1,21 @@
 // Set dimensions of the SVG element
-const width = 1400;
+const width = 1500;
 const height = 650;
 
 // Global mission data variable
 let missionData = [];
 
 // Create an SVG element
-const svg = d3.select("svg")
+const svg = d3
+    .select("svg")
     .attr("width", width)
     .attr("height", height)
     .call(d3.zoom().on("zoom", zoomed))
     .append("g");
 
 // Define a projection and path generator
-const projection = d3.geoMercator()
+const projection = d3
+    .geoMercator()
     .center([13, 52]) // Center the map on Europe
     .scale(600) // Scale the map
     .translate([width / 2, height / 2]); // Move the map to fit in the SVG
@@ -21,29 +23,34 @@ const projection = d3.geoMercator()
 const path = d3.geoPath().projection(projection);
 
 // Load the GeoJSON data
-d3.json("europe.geojson").then(function(geoData) {
-    console.log("GeoJSON data:", geoData); // Log the data to verify it is loaded correctly
+d3.json("europe.geojson")
+    .then(function (geoData) {
+        console.log("GeoJSON data:", geoData); // Log the data to verify it is loaded correctly
 
-    // Bind data and create one path per GeoJSON feature
-    svg.selectAll("path")
-        .data(geoData.features)
-        .enter().append("path")
-        .attr("d", path)
-        .attr("fill", "#FAA0A0")
-        .attr("stroke", "black")
-        .attr("stroke-width", 0.5);
+        // Bind data and create one path per GeoJSON feature
+        svg.selectAll("path")
+            .data(geoData.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr("fill", "#FAA0A0")
+            .attr("stroke", "black")
+            .attr("stroke-width", 0.5);
 
-    // Load the AirMissions data
-    d3.json("AirMissions.json").then(function(data) {
-        missionData = data;
-        console.log("AirMissions data:", missionData); // Log the data to verify it is loaded correctly
-        applyFilters(); // Call applyFilters after loading the data
-    }).catch(function(error) {
-        console.error("Error loading the AirMissions data:", error);
+        // Load the AirMissions data
+        d3.json("AirMissions.json")
+            .then(function (data) {
+                missionData = data;
+                console.log("AirMissions data:", missionData); // Log the data to verify it is loaded correctly
+                applyFilters(); // Call applyFilters after loading the data
+            })
+            .catch(function (error) {
+                console.error("Error loading the AirMissions data:", error);
+            });
+    })
+    .catch(function (error) {
+        console.error("Error loading the GeoJSON data:", error);
     });
-}).catch(function(error) {
-    console.error("Error loading the GeoJSON data:", error);
-});
 
 // Attach event listeners to filter inputs
 document.getElementById("country").addEventListener("change", applyFilters);
@@ -60,16 +67,19 @@ function applyFilters() {
     const targetYear = document.getElementById("year").value;
 
     // Filter the mission data based on the specified criteria
-    filteredMissionData = missionData.filter(function(mission) {
+    filteredMissionData = missionData.filter(function (mission) {
         const missionDate = new Date(mission.MSNDATE);
         const missionCountry = mission.TGTCOUNTRY;
         const missionMonth = missionDate.getMonth() + 1;
         const missionYear = missionDate.getFullYear();
 
         // Check if the mission meets the filtering criteria
-        const countryMatch = targetCountry === "All" || missionCountry === targetCountry;
-        const monthMatch = targetMonth === "All" || missionMonth === parseInt(targetMonth);
-        const yearMatch = targetYear === "All" || missionYear === parseInt(targetYear);
+        const countryMatch =
+            targetCountry === "All" || missionCountry === targetCountry;
+        const monthMatch =
+            targetMonth === "All" || missionMonth === parseInt(targetMonth);
+        const yearMatch =
+            targetYear === "All" || missionYear === parseInt(targetYear);
 
         return countryMatch && monthMatch && yearMatch;
     });
@@ -77,8 +87,8 @@ function applyFilters() {
     // Use the filtered mission data for further processing or visualization
     // Call functions to update visualization or generate charts with filteredMissionData
     updateVisualization(filteredMissionData);
+    updateIconSize(); // Adjust icon size based on the current zoom level
 }
-
 
 // Function to update the visualization with filtered data
 function updateVisualization(filteredData) {
@@ -88,7 +98,8 @@ function updateVisualization(filteredData) {
     // Add icons for each filtered mission
     svg.selectAll("g.icon")
         .data(filteredData)
-        .enter().append("g")
+        .enter()
+        .append("g")
         .attr("class", "icon")
         .append("image")
         .attr("xlink:href", "icons/nuclear-explosion.png")
@@ -96,28 +107,31 @@ function updateVisualization(filteredData) {
         .attr("y", -5)
         .attr("width", 25)
         .attr("height", 25)
-        .attr("transform", function(d) {
+        .attr("transform", function (d) {
             return "translate(" + projection([d.LONGITUDE, d.LATITUDE]) + ")";
         })
-        .on("mouseover", function(event, d) {
+        .on("mouseover", function (event, d) {
             // Display tooltip on mouseover
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", .9);
-            tooltip.html("<div class='tooltip-text'><strong>Location:</strong> " + d.TGTLOCATION + "<br/><strong>Date:</strong> " + d.MSNDATE + "</div>");
+            tooltip.transition().duration(200).style("opacity", 0.9);
+            tooltip.html(
+                "<div class='tooltip-text'><strong>Location:</strong> " +
+                    d.TGTLOCATION +
+                    "<br/><strong>Date:</strong> " +
+                    d.MSNDATE +
+                    "</div>"
+            );
         })
-        .on("mousemove", function(event) {
+        .on("mousemove", function (event) {
             // Update tooltip position on mousemove
-            tooltip.style("left", (event.pageX + 15) + "px")
-                .style("top", (event.pageY - 15) + "px");
+            tooltip
+                .style("left", event.pageX + 15 + "px")
+                .style("top", event.pageY - 15 + "px");
         })
-        .on("mouseout", function() {
+        .on("mouseout", function () {
             // Hide tooltip on mouseout
-            tooltip.transition()
-                .duration(500)
-                .style("opacity", 0);
+            tooltip.transition().duration(500).style("opacity", 0);
         })
-        .on("click", function(event, d) {
+        .on("click", function (event, d) {
             // Display detailed info in the detail view on click
             const detailView = document.getElementById("detailView");
             const detailData = document.getElementById("detailData");
@@ -134,10 +148,16 @@ function updateVisualization(filteredData) {
             `;
             detailView.style.display = "block";
             const takeoffBase = d.TAKEOFFBASE;
-            const { totalMissions, totalPlanes, totalBombs } = calculateTakeoffBaseDetails(takeoffBase, filteredData);
+            const {
+                totalMissions,
+                totalPlanes,
+                totalBombs,
+            } = calculateTakeoffBaseDetails(takeoffBase, filteredData);
 
             // Filter the takeoff base data to get only the matching takeoff base
-            const filteredTakeoffBaseData = filteredData.filter(function(takeoffBase) {
+            const filteredTakeoffBaseData = filteredData.filter(function (
+                takeoffBase
+            ) {
                 return takeoffBase.TAKEOFFBASE === d.TAKEOFFBASE;
             });
 
@@ -145,105 +165,119 @@ function updateVisualization(filteredData) {
             svg.selectAll(".takeoff-base-icon").remove();
 
             // Append the filtered takeoff base icons
-            const takeoffIcons = svg.selectAll(".takeoff-base-icon")
+            const takeoffIcons = svg
+                .selectAll(".takeoff-base-icon")
                 .data(filteredTakeoffBaseData)
-                .enter().append("g")
+                .enter()
+                .append("g")
                 .attr("class", "takeoff-base-icon");
 
-            takeoffIcons.append("image")
+            takeoffIcons
+                .append("image")
                 .attr("xlink:href", "icons/airport-2.png") // Adjust the image URL accordingly
                 .attr("x", -12.5)
                 .attr("y", -12.5)
                 .attr("width", 25)
                 .attr("height", 25)
-                .attr("transform", function(d) {
-                    return "translate(" + projection([d.TAKEOFFLONGITUDE, d.TAKEOFFLATITUDE]) + ")";
+                .attr("transform", function (d) {
+                    return (
+                        "translate(" +
+                        projection([d.TAKEOFFLONGITUDE, d.TAKEOFFLATITUDE]) +
+                        ")"
+                    );
                 })
-                .on("mouseover", function(event, d) {
+                .on("mouseover", function (event, d) {
                     // Display tooltip on mouseover
-                    tooltip.transition()
-                        .duration(200)
-                        .style("opacity", .9);
-                    tooltip.html("<div class='tooltip-text'><strong>Takeoff Base:</strong> " + d.TAKEOFFBASE + "</div>");
+                    tooltip.transition().duration(200).style("opacity", 0.9);
+                    tooltip.html(
+                        "<div class='tooltip-text'><strong>Takeoff Base:</strong> " +
+                            d.TAKEOFFBASE +
+                            "</div>"
+                    );
                 })
-                .on("mousemove", function(event) {
+                .on("mousemove", function (event) {
                     // Update tooltip position on mousemove
-                    tooltip.style("left", (event.pageX + 15) + "px")
-                        .style("top", (event.pageY - 15) + "px");
+                    tooltip
+                        .style("left", event.pageX + 15 + "px")
+                        .style("top", event.pageY - 15 + "px");
                 })
-                .on("mouseout", function() {
+                .on("mouseout", function () {
                     // Hide tooltip on mouseout
-                    tooltip.transition()
-                        .duration(500)
-                        .style("opacity", 0);
+                    tooltip.transition().duration(500).style("opacity", 0);
                 })
-                .on("click", function(event, d) {
+                .on("click", function (event, d) {
                     // Display detailed info in the takeoff detail view on click
-                    const takeoffDetailView = document.getElementById("takeoffDetailView");
-                    const takeoffDetailData = document.getElementById("takeoffDetailData");
+                    const takeoffDetailView = document.getElementById(
+                        "takeoffDetailView"
+                    );
+                    const takeoffDetailData = document.getElementById(
+                        "takeoffDetailData"
+                    );
                     takeoffDetailData.innerHTML = `
                         <strong>Takeoff Base:</strong> ${d.TAKEOFFBASE}<br/>
                         <strong>Number Of Missions:</strong> ${totalMissions}<br/>
-                        <strong>Number Of Planes:</strong> ${totalPlanes}<br/>
-                        <strong>Amount Of Bombs:</strong> ${totalBombs}<br/>
+                        <strong>Total Planes Attacking:</strong> ${totalPlanes}<br/>
+                        <strong>Total Bomb Load:</strong> ${totalBombs} lbs<br/>
                     `;
                     takeoffDetailView.style.display = "block";
                 });
-
-            // Update icon size dynamically based on zoom level
-            // Function to update icon size dynamically based on zoom level
-                function updateIconSize() {
-                    const zoomLevel = d3.zoomTransform(svg.node()).k;
-                    svg.selectAll("image")
-                        .attr("width", 25 / zoomLevel)
-                        .attr("height", 25 / zoomLevel);
-                }
-
-                // Initial update of icon size
-                updateIconSize();
-
-                // Zoom function
-                function zoomed(event) {
-                    svg.attr("transform", event.transform);
-
-                    // Update icon size dynamically based on zoom level
-                    updateIconSize();
-                }
-
-                // Call the zoom function on the SVG element
-                svg.call(d3.zoom().on("zoom", zoomed))
         });
 }
 
-// Add a tooltip div
-const tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip"); // Apply the tooltip class
+// Function to calculate the takeoff base details
+function calculateTakeoffBaseDetails(takeoffBase, data) {
+    let totalMissions = 0;
+    let totalPlanes = 0;
+    let totalBombs = 0;
 
-// Zoom function
-function zoomed(event) {
-    svg.attr("transform", event.transform);
-
-    // Reset the size of the icons to maintain fixed size during zoom
-    svg.selectAll("image")
-        .attr("width", 25 / event.transform.k) // Set the width of the icon inversely proportional to zoom level
-        .attr("height", 25 / event.transform.k); // Set the height of the icon inversely proportional to zoom level
-}
-
-function calculateTakeoffBaseDetails(takeoffBase, missionData) {
-    const missionsFromBase = missionData.filter(mission => mission.TAKEOFFBASE === takeoffBase);
-
-    const totalMissions = missionsFromBase.length;
-    const totalPlanes = missionsFromBase.reduce((total, mission) => total + mission.NUMBEROFPLANESATTACKING, 0);
-    const totalBombs = missionsFromBase.reduce((total, mission) => total + mission.BOMBLOAD, 0);
+    data.forEach(function (d) {
+        if (d.TAKEOFFBASE === takeoffBase) {
+            totalMissions++;
+            totalPlanes += parseInt(d.NUMBEROFPLANESATTACKING);
+            totalBombs += parseInt(d.BOMBLOAD);
+        }
+    });
 
     return { totalMissions, totalPlanes, totalBombs };
 }
+
+// Create a tooltip element
+const tooltip = d3
+    .select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+// Define the zoomed function
+function zoomed(event) {
+    svg.attr("transform", event.transform);
+    updateIconSize(); // Adjust icon size based on the current zoom level
+}
+
+// Function to update the icon size based on zoom level
+function updateIconSize() {
+    const currentZoom = d3.zoomTransform(svg.node()).k;
+    const iconSize = 25 / currentZoom;
+
+    svg.selectAll(".icon image")
+        .attr("width", iconSize)
+        .attr("height", iconSize)
+        .attr("x", -iconSize / 2)
+        .attr("y", -iconSize / 2);
+
+    svg.selectAll(".takeoff-base-icon image")
+        .attr("width", iconSize)
+        .attr("height", iconSize)
+        .attr("x", -iconSize / 2)
+        .attr("y", -iconSize / 2);
+}
+
 
 // Get the button that opens the modal
 const openModalBtn = document.getElementById("openModalBtn");
 
 // When the user clicks the button, open the modal and generate charts
-openModalBtn.addEventListener("click", function() {
+openModalBtn.addEventListener("click", function () {
     // Apply filters and open modal
     applyFilters();
     openModal(filteredMissionData);
@@ -263,16 +297,16 @@ function openModal(filteredData) {
     generatePieCharts(filteredData);
 
     // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
+    span.onclick = function () {
         modal.style.display = "none";
-    }
+    };
 
     // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
-    }
+    };
 }
 
 // Function to generate all four pie charts
@@ -284,61 +318,92 @@ function generatePieCharts(filteredData) {
     }, {});
 
     // Convert the mission counts into an array of objects
-    const missionsPerCountryData = Object.entries(missionCountsByCountry).map(([country, count]) => ({
-        COUNTRY: country,
-        count: count
-    }));
+    const missionsPerCountryData = Object.entries(missionCountsByCountry).map(
+        ([country, count]) => ({
+            COUNTRY: country,
+            count: count,
+        })
+    );
 
     // Generate pie chart for amount of missions per country
-    generatePieChart(missionsPerCountryData, 'missionsPerCountryChart', 'COUNTRY', 'Amount of Bomb Missions per Country');
+    generatePieChart(
+        missionsPerCountryData,
+        "missionsPerCountryChart",
+        "COUNTRY",
+        "Amount of Bomb Missions per Country"
+    );
 
     // Group the data by target country and count the number of missions
-    const missionCountsByTargetCountry = filteredData.reduce((counts, mission) => {
-        counts[mission.TGTCOUNTRY] = (counts[mission.TGTCOUNTRY] || 0) + 1;
-        return counts;
-    }, {});
+    const missionCountsByTargetCountry = filteredData.reduce(
+        (counts, mission) => {
+            counts[mission.TGTCOUNTRY] = (counts[mission.TGTCOUNTRY] || 0) + 1;
+            return counts;
+        },
+        {}
+    );
 
     // Convert the mission counts by target country into an array of objects
-    const missionsPerTargetCountryData = Object.entries(missionCountsByTargetCountry).map(([country, count]) => ({
+    const missionsPerTargetCountryData = Object.entries(
+        missionCountsByTargetCountry
+    ).map(([country, count]) => ({
         TGTCOUNTRY: country,
-        count: count
+        count: count,
     }));
 
     // Generate pie chart for amount of bomb missions per target country
-    generatePieChart(missionsPerTargetCountryData, 'missionsPerTargetCountryChart', 'TGTCOUNTRY', 'Amount of Bomb Missions per Target Country');
+    generatePieChart(
+        missionsPerTargetCountryData,
+        "missionsPerTargetCountryChart",
+        "TGTCOUNTRY",
+        "Amount of Bomb Missions per Target Country"
+    );
 
     // Group the data by country and sum the number of bombs
     const bombCountsByCountry = filteredData.reduce((counts, mission) => {
-        counts[mission.COUNTRY] = (counts[mission.COUNTRY] || 0) + mission.BOMBLOAD;
+        counts[mission.COUNTRY] =
+            (counts[mission.COUNTRY] || 0) + mission.BOMBLOAD;
         return counts;
     }, {});
 
     // Convert the bomb counts into an array of objects
-    const bombsPerCountryData = Object.entries(bombCountsByCountry).map(([country, count]) => ({
-        COUNTRY: country,
-        count: count
-    }));
+    const bombsPerCountryData = Object.entries(bombCountsByCountry).map(
+        ([country, count]) => ({
+            COUNTRY: country,
+            count: count,
+        })
+    );
 
     // Generate pie chart for amount of bombs per country
-    generatePieChart(bombsPerCountryData, 'bombsPerCountryChart', 'COUNTRY', 'Amount of Bombs per Country');
+    generatePieChart(
+        bombsPerCountryData,
+        "bombsPerCountryChart",
+        "COUNTRY",
+        "Amount of Bombs per Country"
+    );
 
     // Group the data by target country and sum the number of bombs
     const bombCountsByTargetCountry = filteredData.reduce((counts, mission) => {
-        counts[mission.TGTCOUNTRY] = (counts[mission.TGTCOUNTRY] || 0) + mission.BOMBLOAD;
+        counts[mission.TGTCOUNTRY] =
+            (counts[mission.TGTCOUNTRY] || 0) + mission.BOMBLOAD;
         return counts;
     }, {});
 
     // Convert the bomb counts by target country into an array of objects
-    const bombsPerTargetCountryData = Object.entries(bombCountsByTargetCountry).map(([country, count]) => ({
+    const bombsPerTargetCountryData = Object.entries(
+        bombCountsByTargetCountry
+    ).map(([country, count]) => ({
         TGTCOUNTRY: country,
-        count: count
+        count: count,
     }));
 
     // Generate pie chart for amount of bombs per target country
-    generatePieChart(bombsPerTargetCountryData, 'bombsPerTargetCountryChart', 'TGTCOUNTRY', 'Amount of Bombs per Target Country');
+    generatePieChart(
+        bombsPerTargetCountryData,
+        "bombsPerTargetCountryChart",
+        "TGTCOUNTRY",
+        "Amount of Bombs per Target Country"
+    );
 }
-
-
 
 function generatePieChart(data, chartId, groupBy, title, valueKey = "count") {
     try {
@@ -354,56 +419,44 @@ function generatePieChart(data, chartId, groupBy, title, valueKey = "count") {
         // Calculate sum for each group
         const aggregatedData = _.map(groupedData, (values, key) => ({
             [groupBy]: key,
-            [valueKey]: _.sumBy(values, valueKey)
+            [valueKey]: _.sumBy(values, valueKey),
         }));
 
         // Define custom colors for each country (add more colors as needed)
         const customColors = {
-            'USA': '#454b1b',
-            'UK': '#534633',
-            'AUSTRIA': '#4d5d53',
-            'ITALY': '#e7dfc7',
-            'SWITZERLAND': '#313445',
-            'BELGIUM': '#000000',
-            'GERMANY': '#4D5D53',
-            'FRANCE': '#4889a7',
-            'LUXEMBOURG': '#B25B2E',
+            USA: "#454b1b",
+            UK: "#534633",
+            AUSTRIA: "#4d5d53",
+            ITALY: "#e7dfc7",
+            SWITZERLAND: "#313445",
+            BELGIUM: "#000000",
+            GERMANY: "#4D5D53",
+            FRANCE: "#4889a7",
+            LUXEMBOURG: "#B25B2E",
         };
 
         // Create pie chart
-        var ctx = document.getElementById(chartId).getContext('2d');
+        var ctx = document.getElementById(chartId).getContext("2d");
         var myChart = new Chart(ctx, {
-            type: 'pie',
+            type: "pie",
             data: {
-                labels: aggregatedData.map(entry => entry[groupBy]),
-                datasets: [{
-                    label: title,
-                    data: aggregatedData.map(entry => entry[valueKey]),
-                    backgroundColor: aggregatedData.map(entry => customColors[entry[groupBy]]),
-                    borderWidth: 1
-                }]
+                labels: aggregatedData.map((entry) => entry[groupBy]),
+                datasets: [
+                    {
+                        label: title,
+                        data: aggregatedData.map((entry) => entry[valueKey]),
+                        backgroundColor: aggregatedData.map(
+                            (entry) => customColors[entry[groupBy]]
+                        ),
+                        borderWidth: 1,
+                    },
+                ],
             },
             options: {
-                responsive: true
-            }
+                responsive: true,
+            },
         });
     } catch (error) {
         console.error("Error generating pie chart:", error);
     }
-}
-
-
-
-
-
-
-function generateRandomColors(numColors) {
-    var colors = [];
-    for (var i = 0; i < numColors; i++) {
-        var r = Math.floor(Math.random() * 256);
-        var g = Math.floor(Math.random() * 256);
-        var b = Math.floor(Math.random() * 256);
-        colors.push(`rgb(${r}, ${g}, ${b})`);
-    }
-    return colors;
 }
