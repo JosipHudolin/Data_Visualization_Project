@@ -102,6 +102,7 @@ function updateVisualization(filteredData) {
         .append("g")
         .attr("class", "icon")
         .append("image")
+        .attr("cursor", "pointer")
         .attr("xlink:href", "icons/nuclear-explosion.png")
         .attr("x", -5)
         .attr("y", -5)
@@ -174,6 +175,7 @@ function updateVisualization(filteredData) {
 
             takeoffIcons
                 .append("image")
+                .attr("cursor", "pointer")
                 .attr("xlink:href", "icons/airport-2.png") // Adjust the image URL accordingly
                 .attr("x", -12.5)
                 .attr("y", -12.5)
